@@ -1,0 +1,5 @@
+Group Test
+
+Switch Lampe_Salon 	"Lampe" (Test)
+
+String Arduino "Arduino [%s]" (Test) {serial="/dev/ttyACM0"}
