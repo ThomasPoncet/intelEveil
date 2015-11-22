@@ -7,7 +7,7 @@ Un tel éveil... L'intelligence, dès le réveil ! [Projet bâtiment intelligent
 
 ### Dossier ArduinoSketches
 
-Contient tous les sketch arduino du projet (avec normalement un dossier par sketche, et un sketch par arduino).
+Contient tous les sketch arduino du projet (avec normalement un dossier par sketche, et un sketch par arduino). Ces sketchs sont à charger sur les cartes arduino depuis n'importe quelle machine.
 
 ### Dossier OpenHAB
 
