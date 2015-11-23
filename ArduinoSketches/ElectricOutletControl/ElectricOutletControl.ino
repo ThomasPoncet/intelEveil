@@ -18,13 +18,43 @@ void setup() {
   // Transmitter on pin 10
   mySwitch.enableTransmit(10);
 
+  mySwitch.switchOff(firstDIPSwitches,lastDIPSwitches);
+
 }
 void loop() {
-  mySwitch.switchOn(firstDIPSwitches,lastDIPSwitches);
-  delay(2000);
-  mySwitch.switchOff(firstDIPSwitches,lastDIPSwitches);
-  delay(2000);
+  String command = Serial.readString();
+//  Serial.println(command);
+//  if (command == NULL) {
+//    Serial.println("null");
+//  }
+//  if (command != NULL){
+//    if (command == "ON"){
+//      mySwitch.switchOn(firstDIPSwitches,lastDIPSwitches);
+//    } else if (command == "OFF"){
+//      mySwitch.switchOff(firstDIPSwitches,lastDIPSwitches);
+//    }
+//  }
+  executeCommandSerial();
 }
 
+void commandHandler(String command){
+  if (command == "ON"){
+    mySwitch.switchOn(firstDIPSwitches,lastDIPSwitches);
+  } else if (command == "OFF"){
+    mySwitch.switchOff(firstDIPSwitches,lastDIPSwitches);
+  }
+}
 
+void executeCommandSerial() {
+  String stream = Serial.readString();
+  if (stream != NULL) {
+    int separator = stream.indexOf(';');
+    int commandStart = 0;
+    while (separator != -1) {
+      commandHandler(stream.substring(commandStart, separator));
+      commandStart = separator + 1;
+      separator = stream.indexOf(commandStart, ';');
+    }
+  }
+}
 
