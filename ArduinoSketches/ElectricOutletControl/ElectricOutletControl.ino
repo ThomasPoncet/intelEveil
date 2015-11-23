@@ -28,6 +28,7 @@ void loop() {
 //    Serial.println("null");
 //  }
 //  if (command != NULL){
+//    Serial.println(command.indexOf(';', 5));
 //    if (command == "ON"){
 //      mySwitch.switchOn(firstDIPSwitches,lastDIPSwitches);
 //    } else if (command == "OFF"){
@@ -38,10 +39,16 @@ void loop() {
 }
 
 void commandHandler(String command){
+  Serial.println(command);
   if (command == "ON"){
     mySwitch.switchOn(firstDIPSwitches,lastDIPSwitches);
+    Serial.println("On !");
   } else if (command == "OFF"){
     mySwitch.switchOff(firstDIPSwitches,lastDIPSwitches);
+    Serial.println("Off !");
+  } else if (command == "WAIT"){    // Useless : to test
+    Serial.println("hey !");
+    delay(2000);
   }
 }
 
@@ -51,9 +58,11 @@ void executeCommandSerial() {
     int separator = stream.indexOf(';');
     int commandStart = 0;
     while (separator != -1) {
+      delay(100);
+      Serial.println(separator);
       commandHandler(stream.substring(commandStart, separator));
       commandStart = separator + 1;
-      separator = stream.indexOf(commandStart, ';');
+      separator = stream.indexOf(';', commandStart);
     }
   }
 }
