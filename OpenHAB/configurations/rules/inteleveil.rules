@@ -1,0 +1,18 @@
+
+
+rule "Coffee Machine on"
+when
+        Item CoffeeMachine received command ON
+then
+        logInfo("SwitchLightsOnCoffeMachine","Switching on coffe machine")
+        sendCommand(ArduinoCoffee, "ON;")
+end
+
+
+rule "Coffee Machine off"
+when
+        Item CoffeeMachine received command OFF
+then
+        logInfo("SwitchOffCoffeMachine","Switching off coffe machine")
+        sendCommand(ArduinoCoffee, "OFF;")
+end

@@ -1,0 +1,7 @@
+Group Coffee
+Group Arduinos
+
+
+Switch	CoffeeMachine	"Machine à café" (Coffee)
+
+String ArduinoCoffee "Arduino Coffee [%s]" (Arduinos) {serial="/dev/ttyACM0"}

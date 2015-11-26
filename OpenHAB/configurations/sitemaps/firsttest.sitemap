@@ -1,6 +1,0 @@
-sitemap firsttest label="My Home"
-{
- Frame {
-  Group item=Test label="Test" icon="desk"
- }
-}
