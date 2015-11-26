@@ -1,18 +1,23 @@
 
-
+/**
+ * Rule to send the command ON to the arduino that command the coffee machine
+ */
 rule "Coffee Machine on"
 when
         Item CoffeeMachine received command ON
 then
-        logInfo("SwitchLightsOnCoffeMachine","Switching on coffe machine")
+        logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
         sendCommand(ArduinoCoffee, "ON;")
 end
 
 
+/**
+ * Rule to send the command OFF to the arduino that command the coffee machine
+ */
 rule "Coffee Machine off"
 when
         Item CoffeeMachine received command OFF
 then
-        logInfo("SwitchOffCoffeMachine","Switching off coffe machine")
+        logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
         sendCommand(ArduinoCoffee, "OFF;")
 end
