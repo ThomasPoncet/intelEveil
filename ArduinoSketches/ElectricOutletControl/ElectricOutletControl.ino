@@ -6,6 +6,9 @@
 
 RCSwitch mySwitch = RCSwitch();
 
+// Used pins
+int transmitterPin = 10;
+
 // DIP switches configuration
 char *firstDIPSwitches = "10000";
 char *lastDIPSwitches = "00010";
@@ -31,8 +34,7 @@ void executeCommandSerial(void (*commandHandler)(String)) {
 void setup() {
   Serial.begin(9600);
 
-  // Transmitter on pin 10
-  mySwitch.enableTransmit(10);
+  mySwitch.enableTransmit(transmitterPin);
 
   mySwitch.switchOff(firstDIPSwitches,lastDIPSwitches);
 
