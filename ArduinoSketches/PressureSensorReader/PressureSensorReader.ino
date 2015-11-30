@@ -4,10 +4,13 @@
 int pressureSensorPin = 0;
 
 // Configuration values
-int limitValue = 500;
+int limitValue = 50;
 
 // Pressure state
 boolean pressed;
+
+// Return cmd
+String pressure = "PRESSURE=";
 
 void setup() {
   Serial.begin(9600);
@@ -15,15 +18,10 @@ void setup() {
 }
 
 void loop() {
-//  if (pressed != analogRead(pressureSensorPin) > limitValue) {
-//    pressed = !pressed;
-//    // Serial acction
-//  }
-  
-  // Pressure value log
-  Serial.println(analogRead(pressureSensorPin));
-  delay(500);
+  if (pressed != analogRead(pressureSensorPin) > limitValue) {
+    pressed = !pressed;
+    Serial.println(pressure+pressed);
+    delay(500);
+  }
 }
-
-
 
