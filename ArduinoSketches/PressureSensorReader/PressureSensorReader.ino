@@ -10,7 +10,7 @@ int limitValue = 50;
 boolean pressed;
 
 // Return cmd
-String pressure = "PRESSURE=";
+String pressure = "PRESSURE";
 
 void setup() {
   Serial.begin(9600);

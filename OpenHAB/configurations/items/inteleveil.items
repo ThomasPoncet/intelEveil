@@ -5,3 +5,5 @@ Group Arduinos
 Switch	CoffeeMachine	"Machine à café" (Coffee)
 
 String ArduinoCoffee "Arduino Coffee [%s]" (Arduinos) {serial="/dev/ttyACM0"}
+
+String ArduinoPressureSensor "[%s]" (Coffee) {serial="/dev/ttyACM2"}

@@ -21,3 +21,49 @@ then
         logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
         sendCommand(ArduinoCoffee, "OFF;")
 end
+
+
+/**
+ * Rule when pressure sensor is pressed or unpressd
+ */
+rule "Pressure sensor pressed or unpressed"
+when
+        Item ArduinoPressureSensor changed
+then
+		if (ArduinoPressureSensor.state.toString().contains("PRESSURE1")){
+	        logInfo("SensorPressed","Pressure Sensor has been pressed")
+	        sendCommand(CoffeeMachine, ON)
+       	} else if (ArduinoPressureSensor.state.toString().contains("PRESSURE0")){
+       		logInfo("SensorUnPressed","Pressure Sensor has been unpressed")
+        	sendCommand(CoffeeMachine, OFF)
+       	}
+end
+
+
+
+/**
+ * IT SHOULD WORK... We've got to search on that
+ */
+
+///**
+// * Rule when pressure sensor is pressed
+// */
+//rule "Pressure sensor pressed"
+//when
+//        Item ArduinoPressureSensor changed from PRESSURE0 to PRESSURE1
+//then
+//        logInfo("SensorPressed","Pressure Sensor has been pressed")
+//        sendCommand(CoffeeMachine, ON)
+//end
+//
+//
+///**
+// * Rule when pressure sensor is unpressed
+// */
+//rule "Pressure sensor unpressed"
+//when
+//        Item ArduinoPressureSensor changed from PRESSURE1 to PRESSURE0
+//then
+//        logInfo("SensorUnPressed","Pressure Sensor has been unpressed")
+//        sendCommand(CoffeeMachine, OFF)
+//end
