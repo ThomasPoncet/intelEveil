@@ -33,9 +33,12 @@ then
 		if (ArduinoPressureSensor.state.toString().contains("PRESSURE1")){
 	        logInfo("SensorPressed","Pressure Sensor has been pressed")
 	        sendCommand(CoffeeMachine, ON)
+	        executeCommandLine('/etc/openhab/configurations/play.sh')
+//	        executeCommandLine('echo -n "add /usr/share/openhab/sounds/CoursePoursuite.mp3" | nc -U /tmp/vlc.sock | wall')
        	} else if (ArduinoPressureSensor.state.toString().contains("PRESSURE0")){
        		logInfo("SensorUnPressed","Pressure Sensor has been unpressed")
         	sendCommand(CoffeeMachine, OFF)
+	        executeCommandLine('echo -n "pause" | nc -U /tmp/vlc.sock ')
        	}
 end
 
