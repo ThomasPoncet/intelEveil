@@ -3,4 +3,7 @@ sitemap inteleveil label="intelÉveil"
  Frame {
   Group item=Coffee label="Café" icon="kitchen"
  }
+ Frame {
+  Group item=Config label="Configuration" icon="chart"
+ }
 }
