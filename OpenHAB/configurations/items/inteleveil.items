@@ -5,8 +5,8 @@ Group Arduinos
 
 Switch	CoffeeMachine	"Machine à café" (Coffee)
 
-String ArduinoCoffee "Arduino Coffee [%s]" (Arduinos) {serial="/dev/ttyACM2"}
+String ArduinoCoffee "Arduino Coffee [%s]" (Arduinos) {serial="/dev/ttyACM0"}
 
-String ArduinoPressureSensor "[%s]" (Coffee) {serial="/dev/ttyACM3"}
+String ArduinoPressureSensor "[%s]" (Coffee) {serial="/dev/ttyACM1"}
 
 DateTime WakeUpTime "Heure de réveil" (Config)
