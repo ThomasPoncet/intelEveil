@@ -9,4 +9,6 @@ String ArduinoCoffee "Arduino Coffee [%s]" (Arduinos) {serial="/dev/ttyACM0"}
 
 String ArduinoPressureSensor "[%s]" (Coffee) {serial="/dev/ttyACM1"}
 
+Dimmer XBMC_Volume "XBMC Volume [%.1f]" (XBMC) { xbmc="=[#local|Application.Volume]" }
+
 DateTime WakeUpTime "Heure de réveil" (Config)
