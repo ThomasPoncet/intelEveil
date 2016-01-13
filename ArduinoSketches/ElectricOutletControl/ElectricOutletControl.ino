@@ -1,10 +1,23 @@
 
 
+
+
+//void loop() {
+//
+//    for (int i = 0; i < 3; i++) {
+//      irsend.sendNEC(0xFDB04F, 32);
+//      delay(40);
+//    }
+//  delay(5000);
+//}
+
 // Help taken there : http://www.instructables.com/id/Arduino-433Mhz-Wireless-Communication-Rc-Switch/
 
 #include <RCSwitch.h> // Needs RC-Switch library, can be found there : https://github.com/sui77/rc-switch
+#include <IRremote.h> // Needs IRremote library, can be found there : https://github.com/z3t0/Arduino-IRremote
 
 RCSwitch mySwitch = RCSwitch();
+IRsend irsend;
 
 // Used pins
 int transmitterPin = 10;
@@ -57,6 +70,20 @@ void commandHandler(String command){
   } else if (command == "WAIT"){    // Useless : only to test
     Serial.println("Waiting 2 seconds...");
     delay(2000);
+  } else if (command == "TVON"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC5(0xC4C,12);
+      delay(40);
+    }
+    Serial.println("Tv On !");
+    delay(10);
+  } else if (command == "TVOFF"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC5(0x44C,12);
+      delay(40);
+    }
+    Serial.println("Tv Off !");
+    delay(10);
   }
 }
 
