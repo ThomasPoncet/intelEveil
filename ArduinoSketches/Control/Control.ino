@@ -26,6 +26,40 @@ int transmitterPin = 10;
 char *firstDIPSwitches = "10000";
 char *lastDIPSwitches = "00010";
 
+// IR TV Codes (use RC6)
+int tvOnOff_0 = 0x1000C;
+int tvOnOff_1 = 0xC;
+int tv0_0 = 0x0;
+int tv0_1 = 0x1000;
+int tv1_0 = 0x1;
+int tv1_1 = 0x1001;
+int tv2_0 = 0x2;
+int tv2_1 = 0x1002;
+int tv3_0 = 0x3;
+int tv3_1 = 0x1003;
+int tv4_0 = 0x4;
+int tv4_1 = 0x1004;
+int tv5_0 = 0x5;
+int tv5_1 = 0x1005;
+int tv6_0 = 0x6;
+int tv6_1 = 0x1006;
+int tv7_0 = 0x7;
+int tv7_1 = 0x1007;
+int tv8_0 = 0x8;
+int tv8_1 = 0x1008;
+int tv9_0 = 0x9;
+int tv9_1 = 0x1009;
+int tvVolUp_0 = 0x10;
+int tvVolUp_1 = 0x10010;
+int tvVolDown_0 = 0x11;
+int tvVolDown_1 = 0x10011;
+int tvChanUp_0 = 0x4C;
+int tvChanUp_1 = 0x1004C;
+int tvChanDown_0 = 0x4D;
+int tvChanDown_1 = 0x1004D;
+int tvMuteDown_0 = 0xD;
+int tvMuteDown_1 = 0x1000D;
+
 
 /**
  * Aux function to read commands (separated by a ";") on the serial stream.
