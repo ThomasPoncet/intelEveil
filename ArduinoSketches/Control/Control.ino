@@ -57,8 +57,8 @@ int tvChanUp_0 = 0x4C;
 int tvChanUp_1 = 0x1004C;
 int tvChanDown_0 = 0x4D;
 int tvChanDown_1 = 0x1004D;
-int tvMuteDown_0 = 0xD;
-int tvMuteDown_1 = 0x1000D;
+int tvMute_0 = 0xD;
+int tvMute_1 = 0x1000D;
 
 
 /**
@@ -104,20 +104,88 @@ void commandHandler(String command){
   } else if (command == "WAIT"){    // Useless : only to test
     Serial.println("Waiting 2 seconds...");
     delay(2000);
-  } else if (command == "TVON"){
+  } else if (command == "TVONOFF"){
     for (int i = 0; i < 3; i++) {
-      irsend.sendRC5(0xC4C,12);
+      irsend.sendRC6(tvOnOff_0,20);
       delay(40);
     }
-    Serial.println("Tv On !");
+    Serial.println("Tv On/Off !");
     delay(10);
-  } else if (command == "TVOFF"){
+  } else if (command == "TV0"){
     for (int i = 0; i < 3; i++) {
-      irsend.sendRC5(0x44C,12);
+      irsend.sendRC6(tv0_0,20);
       delay(40);
     }
-    Serial.println("Tv Off !");
-    delay(10);
+  } else if (command == "TV1"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv1_0,20);
+      delay(40);
+    }
+  } else if (command == "TV2"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv2_0,20);
+      delay(40);
+    }
+  } else if (command == "TV3"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv3_0,20);
+      delay(40);
+    }
+  } else if (command == "TV4"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv4_0,20);
+      delay(40);
+    }
+  } else if (command == "TV5"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv5_0,20);
+      delay(40);
+    }
+  } else if (command == "TV6"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv6_0,20);
+      delay(40);
+    }
+  } else if (command == "TV7"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv7_0,20);
+      delay(40);
+    }
+  } else if (command == "TV8"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv8_0,20);
+      delay(40);
+    }
+  } else if (command == "TV9"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tv9_0,20);
+      delay(40);
+    }
+  } else if (command == "TVVOLUP"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tvVolUp_0,20);
+      delay(40);
+    }
+  } else if (command == "TVVOLDOWN"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tvVolDown_0,20);
+      delay(40);
+    }
+  } else if (command == "TVCHANUP"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tvChanUp_0,20);
+      delay(40);
+    }
+  } else if (command == "TVCHANDOWN"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tvChanDown_0,20);
+      delay(40);
+    }
+  } else if (command == "TVMUTE"){
+    for (int i = 0; i < 3; i++) {
+      irsend.sendRC6(tvMute_0,20);
+      delay(40);
+    }
   }
 }
 
