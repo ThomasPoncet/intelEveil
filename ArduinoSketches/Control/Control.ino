@@ -23,8 +23,14 @@ IRsend irsend;
 int transmitterPin = 10;
 
 // DIP switches configuration
-char *firstDIPSwitches = "10000";
-char *lastDIPSwitches = "00010";
+char *coffeeFirstDIPSwitches = "10000";
+char *coffeeLastDIPSwitches = "00010";
+char *heaterFirstDIPSwitches = "11111";
+char *heaterLastDIPSwitches = "00010";
+char *lightFirstDIPSwitches = "00000";
+char *lightLastDIPSwitches = "00000";
+char *curtainFirstDIPSwitches = "00000";
+char *curtainLastDIPSwitches = "00000";
 
 // IR TV Codes (use RC6)
 int tvOnOff_0 = 0x1000C;
@@ -83,7 +89,10 @@ void setup() {
 
   mySwitch.enableTransmit(transmitterPin);
 
-  mySwitch.switchOff(firstDIPSwitches,lastDIPSwitches);
+  mySwitch.switchOff(coffeeFirstDIPSwitches,coffeeLastDIPSwitches);
+  mySwitch.switchOff(heaterFirstDIPSwitches,heaterLastDIPSwitches);
+  mySwitch.switchOff(lightFirstDIPSwitches,lightLastDIPSwitches);
+  mySwitch.switchOff(curtainFirstDIPSwitches,curtainLastDIPSwitches);
 
 }
 
@@ -93,13 +102,37 @@ void loop() {
 
 
 void commandHandler(String command){
-  if (command == "ON"){
-    mySwitch.switchOn(firstDIPSwitches,lastDIPSwitches);
-    Serial.println("On !");
+  if (command == "COFFEEON"){
+    mySwitch.switchOn(coffeeFirstDIPSwitches,coffeeLastDIPSwitches);
+    Serial.println("Coffee on !");
     delay(10);    // To give time for radio transmission
-  } else if (command == "OFF"){
-    mySwitch.switchOff(firstDIPSwitches,lastDIPSwitches);
-    Serial.println("Off !");
+  } else if (command == "COFFEEOFF"){
+    mySwitch.switchOff(coffeeFirstDIPSwitches,coffeeLastDIPSwitches);
+    Serial.println("Coffee off !");
+    delay(10);    // To give time for radio transmission
+  } else if (command == "HEATERON"){
+    mySwitch.switchOn(heaterFirstDIPSwitches,heaterLastDIPSwitches);
+    Serial.println("Heater on !");
+    delay(10);    // To give time for radio transmission
+  } else if (command == "HEATEROFF"){
+    mySwitch.switchOff(heaterFirstDIPSwitches,heaterLastDIPSwitches);
+    Serial.println("Heater off !");
+    delay(10);    // To give time for radio transmission
+  } else if (command == "LIGHTON"){
+    mySwitch.switchOn(lightFirstDIPSwitches,lightLastDIPSwitches);
+    Serial.println("Light on !");
+    delay(10);    // To give time for radio transmission
+  } else if (command == "LIGHTOFF"){
+    mySwitch.switchOff(lightFirstDIPSwitches,lightLastDIPSwitches);
+    Serial.println("Light off !");
+    delay(10);    // To give time for radio transmission
+  } else if (command == "CURTAINON"){
+    mySwitch.switchOn(curtainFirstDIPSwitches,curtainLastDIPSwitches);
+    Serial.println("Curtain on !");
+    delay(10);    // To give time for radio transmission
+  } else if (command == "CURTAINOFF"){
+    mySwitch.switchOff(curtainFirstDIPSwitches,curtainLastDIPSwitches);
+    Serial.println("Curtain off !");
     delay(10);    // To give time for radio transmission
   } else if (command == "WAIT"){    // Useless : only to test
     Serial.println("Waiting 2 seconds...");
@@ -188,4 +221,3 @@ void commandHandler(String command){
     }
   }
 }
-
