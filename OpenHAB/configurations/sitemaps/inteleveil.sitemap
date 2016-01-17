@@ -5,6 +5,6 @@ sitemap inteleveil label="intelÉveil"
  }
  Frame {
   Group item=Config label="Configuration" icon="chart"
-  Slider item=XBMC_Volume
+//  Slider item=XBMC_Volume
  }
 }
