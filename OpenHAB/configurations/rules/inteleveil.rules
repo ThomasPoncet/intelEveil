@@ -33,9 +33,11 @@ then
 		if (ArduinoPressureSensor.state.toString().contains("PRESSURE1")){
 	        logInfo("SensorPressed","Pressure Sensor has been pressed")
 	        sendCommand(CoffeeMachine, ON)
+	        executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
        	} else if (ArduinoPressureSensor.state.toString().contains("PRESSURE0")){
        		logInfo("SensorUnPressed","Pressure Sensor has been unpressed")
         	sendCommand(CoffeeMachine, OFF)
+	        executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
        	}
 end
 
