@@ -10,11 +10,7 @@ String ArduinoControl "Arduino Control [%s]" (Arduinos) {serial="/dev/ttyACM1"}
 String ArduinoPressureSensor "[%s]" (Coffee) {serial="/dev/ttyACM0"}
 
 //Dimmer XBMC_Volume "XBMC Volume [%.1f]" (XBMC) { xbmc="=[#local|Application.Volume]" }
-Switch Button_Up (Config) {enocean="{id=01:80:70:A8, eep=F6:02:01, channel=A}"}
-Switch Button_Up_I (Config) {enocean="{id=01:80:70:A8, eep=F6:02:01, channel=A, parameter=I}"}
-Switch Button_Up_O (Config) {enocean="{id=01:80:70:A8, eep=F6:02:01, channel=A, parameter=O}"}
-Contact contact_door "msg : [%s]" (Config) {enocean="{id=01:80:70:A8, eep=D5:00:01, parameter=CONTACT_STATE:closed}"}
-String enocelembrut "msg : [%s]" (Config) {enocean="{id=01:80:70:A8}"}
-String enocserial "msg : [%s]" (Config) {serial="/dev/ttyUSB0"}
+
+Contact FrontDoor "Front door [%s]" <frontdoor> (Config) {enocean="{id=01:80:70:A8, eep=D5:00:01, parameter=CONTACT_STATE"}
 
 DateTime WakeUpTime "Heure de réveil" (Config)
