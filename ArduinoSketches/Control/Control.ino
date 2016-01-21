@@ -27,10 +27,10 @@ char *coffeeFirstDIPSwitches = "10000";
 char *coffeeLastDIPSwitches = "00010";
 char *heaterFirstDIPSwitches = "11111";
 char *heaterLastDIPSwitches = "00010";
-char *lightFirstDIPSwitches = "00000";
-char *lightLastDIPSwitches = "00000";
-char *curtainFirstDIPSwitches = "00000";
-char *curtainLastDIPSwitches = "00000";
+char *lightFirstDIPSwitches = "11111";
+char *lightLastDIPSwitches = "10000";
+char *curtainFirstDIPSwitches = "11111";
+char *curtainLastDIPSwitches = "01000";
 
 // IR TV Codes (use RC6)
 int tvOnOff_0 = 0x1000C;
