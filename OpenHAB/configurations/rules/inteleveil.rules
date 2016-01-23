@@ -8,7 +8,6 @@ rule "Coffee Machine on"
 when
         Item CoffeeMachine received command ON
 then
-        logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
         sendCommand(ArduinoControl, "COFFEEON;")
 end
 /**
@@ -18,7 +17,6 @@ rule "Coffee Machine off"
 when
         Item CoffeeMachine received command OFF
 then
-        logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
         sendCommand(ArduinoControl, "COFFEEOFF;")
 end
 /**
@@ -28,7 +26,6 @@ rule "Light on"
 when
         Item Light received command ON
 then
-        logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
         sendCommand(ArduinoControl, "LIGHTON;")
 end
 /**
@@ -38,7 +35,6 @@ rule "Light off"
 when
         Item Light received command OFF
 then
-        logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
         sendCommand(ArduinoControl, "LIGHTOFF;")
 end
 /**
@@ -48,7 +44,6 @@ rule "Heater on"
 when
         Item Heater received command ON
 then
-        logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
         sendCommand(ArduinoControl, "HEATERON;")
 end
 /**
@@ -58,28 +53,25 @@ rule "Heater off"
 when
         Item Heater received command OFF
 then
-        logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
         sendCommand(ArduinoControl, "HEATEROFF;")
 end
 /**
- * Rule to send the command CURTAINON to the Control Arduino
+ * Rule to send the command BLINDON to the Control Arduino
  */
-rule "Curtain on"
+rule "Blind on"
 when
-        Item Curtain received command ON
+        Item Blind received command ON
 then
-        logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
-        sendCommand(ArduinoControl, "CURTAINON;")
+        sendCommand(ArduinoControl, "BLINDON;")
 end
 /**
- * Rule to send the command CURTAINOFF to the Control Arduino
+ * Rule to send the command BLINDOFF to the Control Arduino
  */
-rule "Curtain off"
+rule "Blind off"
 when
-        Item Curtain received command OFF
+        Item Blind received command OFF
 then
-        logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
-        sendCommand(ArduinoControl, "CURTAINOFF;")
+        sendCommand(ArduinoControl, "BLINDOFF;")
 end
 
 

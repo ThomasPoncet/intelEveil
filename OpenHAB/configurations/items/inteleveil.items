@@ -14,7 +14,7 @@ String TVState "État de la télévision [%s]" (GeneralState, Multimedias)
 Switch	CoffeeMachine	"Machine à café" (GeneralState, ControlledObjects)
 Switch	Light	"Lumière" (GeneralState, ControlledObjects)
 Switch	Heater	"Radiateur" (GeneralState, ControlledObjects)
-Switch	Curtain	"Rideau" (GeneralState, ControlledObjects)
+Switch	Blind	"Store" (GeneralState, ControlledObjects)
 // Arduinos
 String ArduinoControl "Arduino Control [%s]" (Arduinos) {serial="/dev/ttyACM1"}
 String ArduinoSensors "[%s]" (Arduinos) {serial="/dev/ttyACM0"}
