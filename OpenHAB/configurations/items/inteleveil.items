@@ -1,16 +1,25 @@
-Group Coffee
-Group Config
 Group Arduinos
+Group GeneralState
+Group Sensors
+Group Multimedias
+Group ControlledObjects
 
-
-Switch	CoffeeMachine	"Machine à café" (Coffee)
-
+// Sensors
+String BedState "État du lit [%s]" (GeneralState, Sensors)
+Contact FrontDoor "Porte d'entrée [%s]" <frontdoor> (GeneralState, Sensors) {enocean="{id=01:80:70:A8, eep=D5:00:01, parameter=CONTACT_STATE"}
+// Multimedias
+String MusicState "État du lecteur de musique [%s]" (GeneralState, Multimedias)
+String TVState "État de la télévision [%s]" (GeneralState, Multimedias)
+// Controlled Objects
+Switch	CoffeeMachine	"Machine à café" (GeneralState, ControlledObjects)
+Switch	Light	"Lumière" (GeneralState, ControlledObjects)
+Switch	Heater	"Radiateur" (GeneralState, ControlledObjects)
+Switch	Curtain	"Rideau" (GeneralState, ControlledObjects)
+// Arduinos
 String ArduinoControl "Arduino Control [%s]" (Arduinos) {serial="/dev/ttyACM1"}
+String ArduinoSensors "[%s]" (Arduinos) {serial="/dev/ttyACM0"}
 
-String ArduinoPressureSensor "[%s]" (Coffee) {serial="/dev/ttyACM0"}
+
 
 //Dimmer XBMC_Volume "XBMC Volume [%.1f]" (XBMC) { xbmc="=[#local|Application.Volume]" }
-
-Contact FrontDoor "Front door [%s]" <frontdoor> (Config) {enocean="{id=01:80:70:A8, eep=D5:00:01, parameter=CONTACT_STATE"}
-
-DateTime WakeUpTime "Heure de réveil" (Config)
+//DateTime WakeUpTime "Heure de réveil" (Config)

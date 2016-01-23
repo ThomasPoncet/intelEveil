@@ -1,6 +1,8 @@
-
 /**
- * Rule to send the command COFFEEON to the Arduino that command the coffee machine
+ * ------ CONTROLLED OBJECTS RULES ------
+ */
+/**
+ * Rule to send the command COFFEEON to the Control Arduino
  */
 rule "Coffee Machine on"
 when
@@ -9,10 +11,8 @@ then
         logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
         sendCommand(ArduinoControl, "COFFEEON;")
 end
-
-
 /**
- * Rule to send the command COFFEEOFF to the Arduino that command the coffee machine
+ * Rule to send the command COFFEEOFF to the Control Arduino
  */
 rule "Coffee Machine off"
 when
@@ -21,6 +21,66 @@ then
         logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
         sendCommand(ArduinoControl, "COFFEEOFF;")
 end
+/**
+ * Rule to send the command LIGHTON to the Control Arduino
+ */
+rule "Light on"
+when
+        Item Light received command ON
+then
+        logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
+        sendCommand(ArduinoControl, "LIGHTON;")
+end
+/**
+ * Rule to send the command LIGHTOFF to the Control Arduino
+ */
+rule "Light off"
+when
+        Item Light received command OFF
+then
+        logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
+        sendCommand(ArduinoControl, "LIGHTOFF;")
+end
+/**
+ * Rule to send the command HEATERON to the Control Arduino
+ */
+rule "Heater on"
+when
+        Item Heater received command ON
+then
+        logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
+        sendCommand(ArduinoControl, "HEATERON;")
+end
+/**
+ * Rule to send the command HEATEROFF to the Control Arduino
+ */
+rule "Heater off"
+when
+        Item Heater received command OFF
+then
+        logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
+        sendCommand(ArduinoControl, "HEATEROFF;")
+end
+/**
+ * Rule to send the command CURTAINON to the Control Arduino
+ */
+rule "Curtain on"
+when
+        Item Curtain received command ON
+then
+        logInfo("SwitchLightsOnCoffeMachine","Switching on coffee machine")
+        sendCommand(ArduinoControl, "CURTAINON;")
+end
+/**
+ * Rule to send the command CURTAINOFF to the Control Arduino
+ */
+rule "Curtain off"
+when
+        Item Curtain received command OFF
+then
+        logInfo("SwitchOffCoffeMachine","Switching off coffee machine")
+        sendCommand(ArduinoControl, "CURTAINOFF;")
+end
 
 
 /**
@@ -28,13 +88,13 @@ end
  */
 rule "Pressure sensor pressed or unpressed"
 when
-        Item ArduinoPressureSensor changed
+        Item ArduinoSensors changed
 then
-		if (ArduinoPressureSensor.state.toString().contains("PRESSURE1")){
+		if (ArduinoSensors.state.toString().contains("PRESSURE1")){
 	        logInfo("SensorPressed","Pressure Sensor has been pressed")
 	        sendCommand(CoffeeMachine, ON)
 	        executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
-       	} else if (ArduinoPressureSensor.state.toString().contains("PRESSURE0")){
+       	} else if (ArduinoSensors.state.toString().contains("PRESSURE0")){
        		logInfo("SensorUnPressed","Pressure Sensor has been unpressed")
         	sendCommand(CoffeeMachine, OFF)
 	        executeCommandLine('./configurations/vlcSocketPlayer.sh pause')

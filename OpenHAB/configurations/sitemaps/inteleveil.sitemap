@@ -1,10 +1,18 @@
 sitemap inteleveil label="intelÉveil"
 {
  Frame {
-  Group item=Coffee label="Café" icon="kitchen"
+  Group item=GeneralState label="État général (debug)" icon="chart"
  }
  Frame {
-  Group item=Config label="Configuration" icon="chart"
-//  Slider item=XBMC_Volume
+  Group item=Arduino label="Arduinos (debug)"
+ }
+ Frame {
+  Group item=ControlledObjects label="Controle"
+ }
+ Frame {
+  Group item=Multimedias label="Mulitmedia"
+ }
+ Frame {
+  Group item=Sensors label="Capteurs"
  }
 }
