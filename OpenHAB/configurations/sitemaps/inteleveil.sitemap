@@ -4,7 +4,7 @@ sitemap inteleveil label="intelÉveil"
   Group item=GeneralState label="État général (debug)" icon="chart"
  }
  Frame {
-  Group item=Arduino label="Arduinos (debug)"
+  Group item=Arduinos label="Arduinos (debug)"
  }
  Frame {
   Group item=ControlledObjects label="Controle"

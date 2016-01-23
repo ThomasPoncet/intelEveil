@@ -5,7 +5,7 @@ Group Multimedias
 Group ControlledObjects
 
 // Sensors
-String BedState "État du lit [%s]" (GeneralState, Sensors)
+Contact BedState "État du lit [%s]" (GeneralState, Sensors)
 Contact FrontDoor "Porte d'entrée [%s]" <frontdoor> (GeneralState, Sensors) {enocean="{id=01:80:70:A8, eep=D5:00:01, parameter=CONTACT_STATE"}
 // Multimedias
 String MusicState "État du lecteur de musique [%s]" (GeneralState, Multimedias)
@@ -18,6 +18,8 @@ Switch	Blind	"Store" (GeneralState, ControlledObjects)
 // Arduinos
 String ArduinoControl "Arduino Control [%s]" (Arduinos) {serial="/dev/ttyACM1"}
 String ArduinoSensors "[%s]" (Arduinos) {serial="/dev/ttyACM0"}
+// User state
+String UserState "État de l'utilisateur [%s]" (GeneralState)
 
 
 
