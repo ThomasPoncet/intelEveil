@@ -54,9 +54,9 @@ end
  * ------ SENSOR INTERPRETATION RULES ------
  */
 /**
- * When the user go to bed (closed when he is in the bed)
+ * When the bed is occupied (closed when it is occupied)
  */
-rule "User go to bed"
+rule "Bed is occupied"
 when
 	Item BedState changed to CLOSED
 then
@@ -67,9 +67,9 @@ then
 	}
 end
 /**
- * When the user get up (out of the bed) (closed when he is in the bed)
+ * When the bed is no mor occupied (closed when it is occupied)
  */
-rule "User get up"
+rule "Bed is no more occupied"
 when
 	Item BedState changed to OPEN
 then
@@ -80,91 +80,91 @@ then
 	}
 end
 /**
- * When the user go out
+ * When the font door is open
  */
 rule "Front door open"
 when
-    Item FrontDoor changed to OPEN
+	Item FrontDoor changed to OPEN
 then
-    if (UserState.state == "WakingUp2"){
+	if (UserState.state == "WakingUp2"){
 		sendCommand(UserState, "Out")
-    }
+	}
 end
 
 /**
- * ------ CONTROLLED OBJECTS RULES ------
- */
+* ------ CONTROLLED OBJECTS RULES ------
+*/
 /**
- * Rule to send the command COFFEEON to the Control Arduino
- */
+* Rule to send the command COFFEEON to the Control Arduino
+*/
 rule "Coffee Machine on"
 when
-        Item CoffeeMachine received command ON
+	Item CoffeeMachine received command ON
 then
-        sendCommand(ArduinoControl, "COFFEEON;")
+	sendCommand(ArduinoControl, "COFFEEON;")
 end
 /**
- * Rule to send the command COFFEEOFF to the Control Arduino
- */
+* Rule to send the command COFFEEOFF to the Control Arduino
+*/
 rule "Coffee Machine off"
 when
-        Item CoffeeMachine received command OFF
+	Item CoffeeMachine received command OFF
 then
-        sendCommand(ArduinoControl, "COFFEEOFF;")
+	sendCommand(ArduinoControl, "COFFEEOFF;")
 end
 /**
- * Rule to send the command LIGHTON to the Control Arduino
- */
+* Rule to send the command LIGHTON to the Control Arduino
+*/
 rule "Light on"
 when
-        Item Light received command ON
+	Item Light received command ON
 then
-        sendCommand(ArduinoControl, "LIGHTON;")
+	sendCommand(ArduinoControl, "LIGHTON;")
 end
 /**
- * Rule to send the command LIGHTOFF to the Control Arduino
- */
+* Rule to send the command LIGHTOFF to the Control Arduino
+*/
 rule "Light off"
 when
-        Item Light received command OFF
+	Item Light received command OFF
 then
-        sendCommand(ArduinoControl, "LIGHTOFF;")
+	sendCommand(ArduinoControl, "LIGHTOFF;")
 end
 /**
- * Rule to send the command HEATERON to the Control Arduino
- */
+* Rule to send the command HEATERON to the Control Arduino
+*/
 rule "Heater on"
 when
-        Item Heater received command ON
+	Item Heater received command ON
 then
-        sendCommand(ArduinoControl, "HEATERON;")
+	sendCommand(ArduinoControl, "HEATERON;")
 end
 /**
- * Rule to send the command HEATEROFF to the Control Arduino
- */
+* Rule to send the command HEATEROFF to the Control Arduino
+*/
 rule "Heater off"
 when
-        Item Heater received command OFF
+	Item Heater received command OFF
 then
-        sendCommand(ArduinoControl, "HEATEROFF;")
+	sendCommand(ArduinoControl, "HEATEROFF;")
 end
 /**
- * Rule to send the command BLINDON to the Control Arduino
- */
+* Rule to send the command BLINDON to the Control Arduino
+*/
 rule "Blind on"
 when
-        Item Blind received command ON
+	Item Blind received command ON
 then
-        sendCommand(ArduinoControl, "BLINDON;")
+	sendCommand(ArduinoControl, "BLINDON;")
 end
 /**
- * Rule to send the command BLINDOFF to the Control Arduino
- */
+* Rule to send the command BLINDOFF to the Control Arduino
+*/
 rule "Blind off"
 when
-        Item Blind received command OFF
+	Item Blind received command OFF
 then
-        sendCommand(ArduinoControl, "BLINDOFF;")
+	sendCommand(ArduinoControl, "BLINDOFF;")
 end
 
 
@@ -173,15 +173,15 @@ end
  */
 rule "Pressure sensor pressed or unpressed"
 when
-        Item ArduinoSensors changed
+	Item ArduinoSensors changed
 then
-		if (ArduinoSensors.state.toString().contains("PRESSURE1")){
-	        postUpdate(BedState, CLOSED)
-	        executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
-       	} else if (ArduinoSensors.state.toString().contains("PRESSURE0")){
-	        postUpdate(BedState, OPEN)
-	        executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
-       	}
+	if (ArduinoSensors.state.toString().contains("PRESSURE1")){
+		postUpdate(BedState, CLOSED)
+		executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
+ 	} else if (ArduinoSensors.state.toString().contains("PRESSURE0")){
+		postUpdate(BedState, OPEN)
+		executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
+ 	}
 end
 
 
@@ -195,10 +195,10 @@ end
 // */
 //rule "Pressure sensor pressed"
 //when
-//        Item ArduinoPressureSensor changed from PRESSURE0 to PRESSURE1
+//				Item ArduinoPressureSensor changed from PRESSURE0 to PRESSURE1
 //then
-//        logInfo("SensorPressed","Pressure Sensor has been pressed")
-//        sendCommand(CoffeeMachine, ON)
+//				logInfo("SensorPressed","Pressure Sensor has been pressed")
+//				sendCommand(CoffeeMachine, ON)
 //end
 //
 //
@@ -207,8 +207,8 @@ end
 // */
 //rule "Pressure sensor unpressed"
 //when
-//        Item ArduinoPressureSensor changed from PRESSURE1 to PRESSURE0
+//				Item ArduinoPressureSensor changed from PRESSURE1 to PRESSURE0
 //then
-//        logInfo("SensorUnPressed","Pressure Sensor has been unpressed")
-//        sendCommand(CoffeeMachine, OFF)
+//				logInfo("SensorUnPressed","Pressure Sensor has been unpressed")
+//				sendCommand(CoffeeMachine, OFF)
 //end
