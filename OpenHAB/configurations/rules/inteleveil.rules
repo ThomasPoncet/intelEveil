@@ -1,5 +1,5 @@
-
-
+import org.openhab.core.library.types.*
+//import org.joda.time.*
 
 /**
  * ------ INIT RULE ------
@@ -67,7 +67,7 @@ then
 	}
 end
 /**
- * When the bed is no mor occupied (closed when it is occupied)
+ * When the bed is no more occupied (closed when it is occupied)
  */
 rule "Bed is no more occupied"
 when
@@ -90,6 +90,17 @@ then
 		sendCommand(UserState, "Out")
 	}
 end
+
+/**
+ * ------ WAKE UP TIME CONTROLER RULES ------
+ */
+rule "Convert time"
+when
+	Item WakeUpTimeStr received command
+then
+	callScript("iftttdatetimeformat")
+end
+ 
 
 /**
 * ------ CONTROLLED OBJECTS RULES ------

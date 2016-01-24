@@ -1,0 +1,22 @@
+
+/**
+ * Little script to update a dateTime item, with a entry an ifttt dateTime
+ * What ifttt gives us : January 23, 2016 at 11:00PM
+ * What we want : 2016-01-23T11:00
+ */
+val months = newArrayList("January","February","March","April","May","June","July","August","September","October","November","December")
+var String[] dateSpaceSplited = WakeUpTimeStr.state.toString().split(' ')
+var java.lang.Integer monthInt = months.indexOf(dateSpaceSplited.get(0))+1
+var String month = monthInt.toString()
+var String day = dateSpaceSplited.get(1).split(',').get(0)
+var String year = dateSpaceSplited.get(2)
+var String[] timeBlock = dateSpaceSplited.get(4).split(':')
+var java.lang.Integer hourInt = new java.lang.Integer(timeBlock.get(0))
+var String minute = timeBlock.get(1).substring(0,2)
+var String amOrPm = timeBlock.get(1).substring(2)
+
+if (amOrPm.equals("PM")){
+	hourInt = hourInt + 12;
+}
+var hour = hourInt.toString()
+postUpdate(WakeUpTime, parse(year+'-'+month+'-'+day+'T'+hour+':'+minute).toString())
