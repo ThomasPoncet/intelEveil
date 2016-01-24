@@ -11,6 +11,8 @@ val Number musicVolMin = 40
 val Number musicVolMax = 256
 val Number musicVolStep = 8
 val Integer musicVolUpWait = 6
+val String tvChannel = "12"
+var Integer loopIncr = 0
 
 /**
  * ------ INIT RULE ------
@@ -21,6 +23,7 @@ when
 then
 	sendCommand(UserState, "Out")
 	executeCommandLine('vlc &') // Starting VLC
+	postUpdate(TVState, "Off")
 end
 /**
  * ------ SHUT DOWN RULE ------
@@ -56,9 +59,8 @@ when
 	Item UserState changed to WakingUp2
 then
 	postUpdate(MusicState, "DoPause")
+	postUpdate(TVState, "TurnOn")
 	sendCommand(Blind, ON)
-	// TVon
-	// Vlc pause
 end
 /**
  * When the user go out
@@ -293,6 +295,24 @@ then
 			sendCommand(MusicVolume, MusicVolume.state as DecimalType + musicVolStep)
         ]
 	}
+end
+rule "Turn TV on"
+when
+	Item TVState changed from Off to TurnOn
+then
+	sendCommand(ArduinoControl, "TVONOFF;")
+	while (loopIncr < tvChannel.length){
+		sendCommand(ArduinoControl, "TV"+tvChannel.charAt(loopIncr)+";")
+		loopIncr = loopIncr+1
+	}
+	postUpdate(TVState, "On")
+end
+rule "Turn TV off"
+when
+	Item TVState changed from On to TurnOff
+then
+	sendCommand(ArduinoControl, "TVONOFF;")
+	postUpdate(TVState, "Off")
 end
 
 /**
