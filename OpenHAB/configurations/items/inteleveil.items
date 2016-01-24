@@ -11,6 +11,7 @@ String WakeUpTimeStr "Heure de réveil [%s]" (GeneralState, Sensors)
 DateTime WakeUpTime "Heure de réveil [%1$tA, %1$td/%1$tm/%1$tY %1$tT]" (GeneralState, Sensors)
 // Multimedias
 String MusicState "État du lecteur de musique [%s]" (GeneralState, Multimedias)
+Number MusicVolume "Volume de la musique [%s]" (GeneralState, Multimedias)
 String TVState "État de la télévision [%s]" (GeneralState, Multimedias)
 // Controlled Objects
 Switch	CoffeeMachine	"Machine à café" (GeneralState, ControlledObjects)

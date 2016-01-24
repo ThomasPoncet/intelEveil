@@ -6,6 +6,11 @@ import org.openhab.model.script.actions.Timer
  * Global variables
  */
 var Timer wakeUpTimer
+var Timer musicVolUpTimer
+val Number musicVolMin = 40
+val Number musicVolMax = 256
+val Number musicVolStep = 8
+val Integer musicVolUpWait = 6
 
 /**
  * ------ INIT RULE ------
@@ -15,6 +20,16 @@ when
 	System started
 then
 	sendCommand(UserState, "Out")
+	executeCommandLine('vlc &') // Starting VLC
+end
+/**
+ * ------ SHUT DOWN RULE ------
+ */
+rule "Initialization rule"
+when
+	System shuts down
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh quit') // Shutting down VLC
 end
 
 
@@ -28,10 +43,10 @@ rule "User has to get up"
 when
 	Item UserState changed to WakingUp1
 then
+	postUpdate(MusicState, "DoPlay")
 	sendCommand(CoffeeMachine, ON)
 	sendCommand(Heater, ON)
 	sendCommand(Light, ON)
-	// Vlc play
 end
 /**
  * When the user get up
@@ -40,6 +55,7 @@ rule "User get up"
 when
 	Item UserState changed to WakingUp2
 then
+	postUpdate(MusicState, "DoPause")
 	sendCommand(Blind, ON)
 	// TVon
 	// Vlc pause
@@ -54,6 +70,15 @@ then
 	sendCommand(ControlledObjects, OFF)
 	// VLC stop
 	// TV stop
+end
+/**
+ * When the user go to sleep
+ */
+rule "User go to sleep"
+when
+	Item UserState changed to Sleeping
+then
+	postUpdate(MusicState, "DoInit")
 end
 
 /**
@@ -215,6 +240,60 @@ then
 	sendCommand(ArduinoControl, "BLINDOFF;")
 end
 
+/**
+ * ------ MULTIMEDIA RULES ------
+ */
+rule "Init Music"
+when
+	Item MusicState changed to DoInit
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh clear')
+	executeCommandLine('./configurations/vlcSocketPlayer.sh enqueue sounds/CoursePoursuite.mp3')
+	// VLC limitation : forced to play to set volume...
+	executeCommandLine('./configurations/vlcSocketPlayer.sh play')
+	executeCommandLine('./configurations/vlcSocketPlayer.sh volume '+musicVolMin.toString())
+	executeCommandLine('./configurations/vlcSocketPlayer.sh stop')
+	postUpdate(MusicVolume, musicVolMin)
+	postUpdate(MusicState, "Stop")
+end
+rule "Play music from Stop"
+when
+	Item MusicState changed from Stop to DoPlay
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh play')
+	postUpdate(MusicState, "Playing")
+	if ((MusicVolume.state as DecimalType) < musicVolMax){
+		sendCommand(MusicVolume, MusicVolume.state as DecimalType + musicVolStep)
+	}
+end
+rule "Play music from Pause"
+when
+	Item MusicState changed from Pause to DoPlay
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
+	postUpdate(MusicState, "Playing")
+	if ((MusicVolume.state as DecimalType) < musicVolMax){
+		sendCommand(MusicVolume, MusicVolume.state as DecimalType + musicVolStep)
+	}
+end
+rule "Pause Music"
+when
+	Item MusicState changed from Playing to DoPause
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
+	postUpdate(MusicState, "Pause")
+end
+rule "Music Vol Up"
+when
+	Item MusicVolume received command
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh volume '+MusicVolume.state.toString())
+	if (((MusicVolume.state as DecimalType) < musicVolMax) && (MusicState.state == "Playing")){
+		musicVolUpTimer = createTimer(now.plusSeconds(musicVolUpWait)) [|
+			sendCommand(MusicVolume, MusicVolume.state as DecimalType + musicVolStep)
+        ]
+	}
+end
 
 /**
  * Rule when pressure sensor is pressed or unpressd
@@ -225,10 +304,8 @@ when
 then
 	if (ArduinoSensors.state.toString().contains("PRESSURE1")){
 		postUpdate(BedState, CLOSED)
-		executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
  	} else if (ArduinoSensors.state.toString().contains("PRESSURE0")){
 		postUpdate(BedState, OPEN)
-		executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
  	}
 end
 
