@@ -1,5 +1,11 @@
 import org.openhab.core.library.types.*
-//import org.joda.time.*
+import org.joda.time.*
+import org.openhab.model.script.actions.Timer
+
+/**
+ * Global variables
+ */
+var Timer wakeUpTimer
 
 /**
  * ------ INIT RULE ------
@@ -94,13 +100,44 @@ end
 /**
  * ------ WAKE UP TIME CONTROLER RULES ------
  */
+ /**
+  * Parsing time from IFTTT format to DateTime format
+  */
 rule "Convert time"
 when
 	Item WakeUpTimeStr received command
 then
 	callScript("iftttdatetimeformat")
 end
- 
+/**
+ * When we are close to a wake up time
+ */
+rule "IFTTT Update"
+when
+	Item WakeUpTime received update
+then
+	// If a timer is already there (a wake up is waiting), we cancel it and prioritize the new wake up time
+	if(wakeUpTimer!=null) {
+		logInfo("wakeUpTimmer", "canceling wakeUpTimmer")
+        wakeUpTimer.cancel()
+        wakeUpTimer = null
+    }
+    // If the wake up time (-1min) is in the past
+	if (now.isAfter(new DateTime((WakeUpTime.state as DateTimeType).calendar.timeInMillis).minusMinutes(1))){
+		if (UserState.state == "Sleeping") {
+			sendCommand(UserState, "WakingUp1")
+		}
+	} else {
+		// We wait for the time to be the wake up time
+		logInfo("wakeUpTimmer", "setting up wakeUpTimmer")
+		wakeUpTimer = createTimer(new DateTime((WakeUpTime.state as DateTimeType).calendar.timeInMillis)) [|
+			logInfo("wakeUpTimmer", "ending wakeUpTimmer")
+			if (UserState.state == "Sleeping") {
+				sendCommand(UserState, "WakingUp1")
+			}
+        ]
+	}
+end
 
 /**
 * ------ CONTROLLED OBJECTS RULES ------
