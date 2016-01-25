@@ -22,6 +22,7 @@ when
 then
 	sendCommand(UserState, "Out")
 	executeCommandLine('vlc &') // Starting VLC
+	postUpdate(MusicState, "Started")
 	postUpdate(TVState, "Off")
 end
 /**
