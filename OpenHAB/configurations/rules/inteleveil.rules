@@ -11,7 +11,7 @@ val Number musicVolMin = 40
 val Number musicVolMax = 256
 val Number musicVolStep = 8
 val Integer musicVolUpWait = 6
-val String tvChannel = "12"
+//val String tvChannel = "12"
 var Integer loopIncr = 0
 
 /**
@@ -144,7 +144,7 @@ end
   */
 rule "Convert time"
 when
-	Item WakeUpTimeStr received command
+	Item WakeUpTimeStr received update
 then
 	callScript("iftttdatetimeformat")
 end
@@ -262,7 +262,7 @@ when
 	Item MusicState changed to DoInit
 then
 	executeCommandLine('./configurations/vlcSocketPlayer.sh clear')
-	executeCommandLine('./configurations/vlcSocketPlayer.sh enqueue sounds/CoursePoursuite.mp3')
+	executeCommandLine('./configurations/vlcSocketPlayer.sh enqueue sounds/'+MusicName.state.toString())
 	// VLC limitation : forced to play to set volume...
 	executeCommandLine('./configurations/vlcSocketPlayer.sh play')
 	executeCommandLine('./configurations/vlcSocketPlayer.sh volume '+musicVolMin.toString())
@@ -313,8 +313,8 @@ when
 	Item TVState changed from Off to TurnOn
 then
 	sendCommand(ArduinoControl, "TVONOFF;")
-	while (loopIncr < tvChannel.length){
-		sendCommand(ArduinoControl, "TV"+tvChannel.charAt(loopIncr)+";")
+	while (loopIncr < TVChannel.state.toString().length){
+		sendCommand(ArduinoControl, "TV"+TVChannel.state.toString().charAt(loopIncr)+";")
 		loopIncr = loopIncr+1
 	}
 	postUpdate(TVState, "On")
