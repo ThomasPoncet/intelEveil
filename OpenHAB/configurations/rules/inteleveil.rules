@@ -11,7 +11,6 @@ val Number musicVolMin = 40
 val Number musicVolMax = 256
 val Number musicVolStep = 8
 val Integer musicVolUpWait = 6
-//val String tvChannel = "12"
 var Integer loopIncr = 0
 
 /**
@@ -81,6 +80,24 @@ when
 	Item UserState changed to Sleeping
 then
 	postUpdate(MusicState, "DoInit")
+end
+/**
+ * When the user turn off the system
+ */
+rule "User turn off system"
+when
+	Item SystemOnOff received command OFF
+then
+	postUpdate(UserState, "SystemOff")
+end
+/**
+ * When the user turn on the system
+ */
+rule "User turn off system"
+when
+	Item SystemOnOff received command ON
+then
+	postUpdate(UserState, "Out")
 end
 
 /**

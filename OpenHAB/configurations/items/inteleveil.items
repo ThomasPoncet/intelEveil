@@ -5,8 +5,11 @@ Group Multimedias
 Group ControlledObjects
 Group Configuration
 
+// On/Off Button
+Switch SystemOnOff "Réveil allumé ou éteint" (GeneralState)
+
 // Sensors
-Contact BedState "État du lit [%s]" (GeneralState, Sensors)
+Contact	BedState "État du lit [%s]" (GeneralState, Sensors)
 Contact FrontDoor "Porte d'entrée [%s]" <frontdoor> (GeneralState, Sensors) {enocean="{id=01:80:70:A8, eep=D5:00:01, parameter=CONTACT_STATE"}
 // Configuration
 String WakeUpInfos "Informations brutes sur le réveil [%s]" (GeneralState, Configuration)

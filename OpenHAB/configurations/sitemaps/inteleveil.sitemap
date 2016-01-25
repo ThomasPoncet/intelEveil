@@ -1,6 +1,9 @@
 sitemap inteleveil label="intelÉveil"
 {
  Frame {
+  Switch item=SystemOnOff
+ }
+ Frame {
   Group item=GeneralState label="État général (debug)" icon="chart"
  }
  Frame {
