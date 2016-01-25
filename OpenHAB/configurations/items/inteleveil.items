@@ -3,12 +3,17 @@ Group GeneralState
 Group Sensors
 Group Multimedias
 Group ControlledObjects
+Group Configuration
 
 // Sensors
 Contact BedState "État du lit [%s]" (GeneralState, Sensors)
 Contact FrontDoor "Porte d'entrée [%s]" <frontdoor> (GeneralState, Sensors) {enocean="{id=01:80:70:A8, eep=D5:00:01, parameter=CONTACT_STATE"}
-String WakeUpTimeStr "Heure de réveil [%s]" (GeneralState, Sensors)
-DateTime WakeUpTime "Heure de réveil [%1$tA, %1$td/%1$tm/%1$tY %1$tT]" (GeneralState, Sensors)
+// Configuration
+String WakeUpInfos "Informations brutes sur le réveil [%s]" (GeneralState, Configuration)
+String WakeUpTimeStr "Heure de réveil [%s]" (GeneralState, Configuration)
+DateTime WakeUpTime "Heure de réveil [%1$tA, %1$td/%1$tm/%1$tY %1$tT]" (GeneralState, Configuration)
+String MusicName "Nom de la musique [%s]" (GeneralState, Configuration)
+String TVChannel "Chaine de télévision [%s]" (GeneralState, Configuration)
 // Multimedias
 String MusicState "État du lecteur de musique [%s]" (GeneralState, Multimedias)
 Number MusicVolume "Volume de la musique [%s]" (GeneralState, Multimedias)

@@ -125,8 +125,20 @@ then
 end
 
 /**
- * ------ WAKE UP TIME CONTROLER RULES ------
+ * ------ WAKE UP INFO CONTROLER RULES ------
  */
+/**
+ * Parsing wake up informations : date;music;channel
+ */
+rule "parse wake up infos"
+when
+	Item WakeUpInfos received command
+then
+	var String[] infos = WakeUpInfos.state.toString().split(';')
+	postUpdate(WakeUpTimeStr, infos.get(0))
+	postUpdate(MusicName, infos.get(1))
+	postUpdate(TVChannel, infos.get(2))
+end
  /**
   * Parsing time from IFTTT format to DateTime format
   */

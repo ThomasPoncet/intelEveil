@@ -15,4 +15,7 @@ sitemap inteleveil label="intelÉveil"
  Frame {
   Group item=Sensors label="Capteurs"
  }
+ Frame {
+  Group item=Configuration label="Configuration"
+ }
 }
