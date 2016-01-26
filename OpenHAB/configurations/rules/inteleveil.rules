@@ -404,9 +404,9 @@ rule "Pressure sensor pressed or unpressed"
 when
 	Item ArduinoSensors changed
 then
-	if (ArduinoSensors.state.toString().contains("UnPressed")){
+	if (ArduinoSensors.state.toString().contains("Press:Low")){
 		postUpdate(BedState, OPEN)
- 	} else if (ArduinoSensors.state.toString().contains("Pressed")){
+ 	} else if (ArduinoSensors.state.toString().contains("Press:High")){
 		postUpdate(BedState, CLOSED)
  	}
 end
