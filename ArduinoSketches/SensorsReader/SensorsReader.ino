@@ -7,7 +7,7 @@ int lightSensorPin = 2;
 
 // Configuration values
 int pressLimVal = 50;
-int tempLimVal = 380;
+int tempLimVal = 320;
 int lightLimVal = 300;
 
 // Pressure state

@@ -6,6 +6,7 @@ import org.openhab.model.script.actions.Timer
  * Global variables
  */
 var Timer wakeUpTimer
+var Timer waitTVTimer
 var Timer musicVolUpTimer
 val Number musicVolMin = 40
 val Number musicVolMax = 256
@@ -71,7 +72,7 @@ when
 then
 	postUpdate(MusicState, "DoPause")
 	postUpdate(TVState, "TurnOn")
-	sendCommand(Blind, ON)
+//	sendCommand(Blind, ON)
 end
 /**
  * When the user go out
@@ -135,6 +136,40 @@ then
 		postUpdate(UserState, "WakedUp")
 	} else if (UserState.state == "WakingUp1"){
 		postUpdate(UserState, "WakingUp2")
+	}
+end
+rule "Temp high"
+when
+	Item TempState changed to High
+then
+	if (Heater.state == ON){
+		sendCommand(ArduinoControl, "HEATEROFF;")
+	}
+end
+rule "Temp low"
+when
+	Item TempState changed to Low
+then
+	if (Heater.state == ON){
+		sendCommand(ArduinoControl, "HEATERON;")
+	}
+end
+rule "Light high"
+when
+	Item LightState changed to High
+then
+	if (Light.state == ON){
+		sendCommand(ArduinoControl, "LIGHTOFF;")
+		sendCommand(ArduinoControl, "BLINDON;")
+	}
+end
+rule "Light low"
+when
+	Item LightState changed to Low
+then
+	if (Light.state == ON){
+		sendCommand(ArduinoControl, "LIGHTON;")
+		sendCommand(ArduinoControl, "BLINDOFF;")
 	}
 end
 /**
@@ -231,7 +266,13 @@ rule "Light on"
 when
 	Item Light received command ON
 then
-	sendCommand(ArduinoControl, "LIGHTON;")
+	if (LightState.state == "High"){
+		sendCommand(ArduinoControl, "LIGHTOFF;")
+		sendCommand(ArduinoControl, "BLINDON;")
+	} else {
+		sendCommand(ArduinoControl, "LIGHTON;")
+		sendCommand(ArduinoControl, "BLINDOFF;")
+	}
 end
 /**
 * Rule to send the command LIGHTOFF to the Control Arduino
@@ -241,6 +282,7 @@ when
 	Item Light received command OFF
 then
 	sendCommand(ArduinoControl, "LIGHTOFF;")
+	sendCommand(ArduinoControl, "BLINDOFF;")
 end
 /**
 * Rule to send the command HEATERON to the Control Arduino
@@ -249,7 +291,7 @@ rule "Heater on"
 when
 	Item Heater received command ON
 then
-	sendCommand(ArduinoControl, "HEATERON;")
+		sendCommand(ArduinoControl, "HEATERON;")
 end
 /**
 * Rule to send the command HEATEROFF to the Control Arduino
@@ -260,24 +302,24 @@ when
 then
 	sendCommand(ArduinoControl, "HEATEROFF;")
 end
-/**
-* Rule to send the command BLINDON to the Control Arduino
-*/
-rule "Blind on"
-when
-	Item Blind received command ON
-then
-	sendCommand(ArduinoControl, "BLINDON;")
-end
-/**
-* Rule to send the command BLINDOFF to the Control Arduino
-*/
-rule "Blind off"
-when
-	Item Blind received command OFF
-then
-	sendCommand(ArduinoControl, "BLINDOFF;")
-end
+///**
+//* Rule to send the command BLINDON to the Control Arduino
+//*/
+//rule "Blind on"
+//when
+//	Item Blind received command ON
+//then
+//	sendCommand(ArduinoControl, "BLINDON;")
+//end
+///**
+//* Rule to send the command BLINDOFF to the Control Arduino
+//*/
+//rule "Blind off"
+//when
+//	Item Blind received command OFF
+//then
+//	sendCommand(ArduinoControl, "BLINDOFF;")
+//end
 
 /**
  * ------ MULTIMEDIA RULES ------
@@ -287,7 +329,7 @@ when
 	Item MusicState changed to DoInit
 then
 	executeCommandLine('./configurations/vlcSocketPlayer.sh clear')
-	executeCommandLine('./configurations/vlcSocketPlayer.sh enqueue sounds/'+MusicName.state.toString())
+	executeCommandLine('./configurations/vlcSocketPlayer.sh enqueue /home/pi/openHAB/sounds/'+MusicName.state.toString())
 	// VLC limitation : forced to play to set volume...
 	executeCommandLine('./configurations/vlcSocketPlayer.sh play')
 	executeCommandLine('./configurations/vlcSocketPlayer.sh volume '+musicVolMin.toString())
@@ -300,7 +342,7 @@ when
 	Item MusicState changed to DoInitAndPlay
 then
 	executeCommandLine('./configurations/vlcSocketPlayer.sh clear')
-	executeCommandLine('./configurations/vlcSocketPlayer.sh enqueue sounds/'+MusicName.state.toString())
+	executeCommandLine('./configurations/vlcSocketPlayer.sh enqueue /home/pi/openHAB/sounds/'+MusicName.state.toString())
 	// VLC limitation : forced to play to set volume...
 	executeCommandLine('./configurations/vlcSocketPlayer.sh play')
 	executeCommandLine('./configurations/vlcSocketPlayer.sh volume '+musicVolMin.toString())
@@ -366,17 +408,22 @@ then
         ]
 	}
 end
+
 rule "Turn TV on"
 when
 	Item TVState changed from Off to TurnOn
 then
 	sendCommand(ArduinoControl, "TVONOFF;")
-	while (loopIncr < TVChannel.state.toString().length){
-		sendCommand(ArduinoControl, "TV"+TVChannel.state.toString().charAt(loopIncr)+";")
-		loopIncr = loopIncr+1
-	}
+	// Wait for the TV to turn on
+	waitTVTimer = createTimer(now.plusSeconds(10)) [|
+		while (loopIncr < TVChannel.state.toString().length){
+			sendCommand(ArduinoControl, "TV"+TVChannel.state.toString().charAt(loopIncr)+";")
+			loopIncr = loopIncr+1
+		}
+	]
 	postUpdate(TVState, "On")
 end
+
 rule "Turn TV off"
 when
 	Item TVState changed from On to TurnOff
@@ -384,6 +431,7 @@ then
 	sendCommand(ArduinoControl, "TVONOFF;")
 	postUpdate(TVState, "Off")
 end
+
 rule "Turn TV on when already on"
 when
 	Item TVState changed from On to TurnOn
@@ -404,9 +452,23 @@ rule "Pressure sensor pressed or unpressed"
 when
 	Item ArduinoSensors changed
 then
-	if (ArduinoSensors.state.toString().contains("Press:Low")){
-		postUpdate(BedState, OPEN)
- 	} else if (ArduinoSensors.state.toString().contains("Press:High")){
-		postUpdate(BedState, CLOSED)
+	if (ArduinoSensors.state.toString().contains("Press")){
+		if (ArduinoSensors.state.toString().contains("Low")){
+			postUpdate(BedState, OPEN)
+	 	} else if (ArduinoSensors.state.toString().contains("High")){
+			postUpdate(BedState, CLOSED)
+	 	}
+ 	} else if (ArduinoSensors.state.toString().contains("Temp")){
+		if (ArduinoSensors.state.toString().contains("Low")){
+			postUpdate(TempState, "Low")
+	 	} else if (ArduinoSensors.state.toString().contains("High")){
+			postUpdate(TempState, "High")
+	 	}
+ 	} else if (ArduinoSensors.state.toString().contains("Light")){
+		if (ArduinoSensors.state.toString().contains("Low")){
+			postUpdate(LightState, "Low")
+	 	} else if (ArduinoSensors.state.toString().contains("High")){
+			postUpdate(LightState, "High")
+	 	}
  	}
 end
