@@ -20,7 +20,12 @@ void setup() {
 void loop() {
   if (pressed != analogRead(pressureSensorPin) > limitValue) {
     pressed = !pressed;
-    Serial.println(pressure+pressed);
+//    Serial.println(pressure+pressed);
+    if (pressed){
+      Serial.println("Pressed");
+    } else {
+      Serial.println("UnPressed");
+    }
     delay(500);
   }
 }

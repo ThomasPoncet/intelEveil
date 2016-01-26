@@ -20,8 +20,9 @@ rule "Initialization rule"
 when
 	System started
 then
-	sendCommand(UserState, "Out")
-	executeCommandLine('vlc &') // Starting VLC
+	sendCommand(SystemOnOff, ON)
+	postUpdate(UserState, "WakedUp")
+//	executeCommandLine('vlc &') // Starting VLC
 	postUpdate(MusicState, "Started")
 	postUpdate(TVState, "Off")
 end
@@ -44,19 +45,29 @@ end
  */
 rule "User has to get up"
 when
-	Item UserState changed to WakingUp1
+	Item UserState changed from Sleeping to WakingUp1
 then
-	postUpdate(MusicState, "DoPlay")
+	postUpdate(MusicState, "DoInitAndPlay")
 	sendCommand(CoffeeMachine, ON)
 	sendCommand(Heater, ON)
 	sendCommand(Light, ON)
+end
+/**
+ * When the user come back to bed
+ */
+rule "User come back to bed"
+when
+	Item UserState changed from WakingUp2 to WakingUp1
+then
+	postUpdate(MusicState, "DoPlay")
+	postUpdate(TVState, "TurnOff")
 end
 /**
  * When the user get up
  */
 rule "User get up"
 when
-	Item UserState changed to WakingUp2
+	Item UserState changed from WakingUp1 to WakingUp2
 then
 	postUpdate(MusicState, "DoPause")
 	postUpdate(TVState, "TurnOn")
@@ -67,20 +78,12 @@ end
  */
 rule "User go out"
 when
-	Item UserState changed to Out
+	Item UserState changed from WakingUp2 to WakedUp or
+	Item UserState changed to SystemOff
 then
 	sendCommand(ControlledObjects, OFF)
-	// VLC stop
-	// TV stop
-end
-/**
- * When the user go to sleep
- */
-rule "User go to sleep"
-when
-	Item UserState changed to Sleeping
-then
-	postUpdate(MusicState, "DoInit")
+	postUpdate(MusicState, "DoStop")
+	postUpdate(TVState, "TurnOff")
 end
 /**
  * When the user turn off the system
@@ -98,7 +101,11 @@ rule "User turn off system"
 when
 	Item SystemOnOff received command ON
 then
-	postUpdate(UserState, "Out")
+	if (BedState.state == CLOSED) {
+		postUpdate(UserState, "Sleeping")
+	} else {
+		postUpdate(UserState, "WakedUp")
+	}
 end
 
 /**
@@ -111,10 +118,10 @@ rule "Bed is occupied"
 when
 	Item BedState changed to CLOSED
 then
-	if (UserState.state == "Out"){
-		sendCommand(UserState, "Sleeping")
+	if (UserState.state == "WakedUp"){
+		postUpdate(UserState, "Sleeping")
 	} else if (UserState.state == "WakingUp2"){
-		sendCommand(UserState, "WakingUp1")
+		postUpdate(UserState, "WakingUp1")
 	}
 end
 /**
@@ -125,9 +132,9 @@ when
 	Item BedState changed to OPEN
 then
 	if (UserState.state == "Sleeping"){
-		sendCommand(UserState, "Out")
+		postUpdate(UserState, "WakedUp")
 	} else if (UserState.state == "WakingUp1"){
-		sendCommand(UserState, "WakingUp2")
+		postUpdate(UserState, "WakingUp2")
 	}
 end
 /**
@@ -138,12 +145,12 @@ when
 	Item FrontDoor changed to OPEN
 then
 	if (UserState.state == "WakingUp2"){
-		sendCommand(UserState, "Out")
+		sendCommand(UserState, "WakedUp")
 	}
 end
 
 /**
- * ------ WAKE UP INFO CONTROLER RULES ------
+ * ------ WAKE UP INFO RULES ------
  */
 /**
  * Parsing wake up informations : date;music;channel
@@ -182,7 +189,7 @@ then
     // If the wake up time (-1min) is in the past
 	if (now.isAfter(new DateTime((WakeUpTime.state as DateTimeType).calendar.timeInMillis).minusMinutes(1))){
 		if (UserState.state == "Sleeping") {
-			sendCommand(UserState, "WakingUp1")
+			postUpdate(UserState, "WakingUp1")
 		}
 	} else {
 		// We wait for the time to be the wake up time
@@ -190,7 +197,7 @@ then
 		wakeUpTimer = createTimer(new DateTime((WakeUpTime.state as DateTimeType).calendar.timeInMillis)) [|
 			logInfo("wakeUpTimmer", "ending wakeUpTimmer")
 			if (UserState.state == "Sleeping") {
-				sendCommand(UserState, "WakingUp1")
+				postUpdate(UserState, "WakingUp1")
 			}
         ]
 	}
@@ -288,6 +295,21 @@ then
 	postUpdate(MusicVolume, musicVolMin)
 	postUpdate(MusicState, "Stop")
 end
+rule "Init and play Music"
+when
+	Item MusicState changed to DoInitAndPlay
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh clear')
+	executeCommandLine('./configurations/vlcSocketPlayer.sh enqueue sounds/'+MusicName.state.toString())
+	// VLC limitation : forced to play to set volume...
+	executeCommandLine('./configurations/vlcSocketPlayer.sh play')
+	executeCommandLine('./configurations/vlcSocketPlayer.sh volume '+musicVolMin.toString())
+	postUpdate(MusicVolume, musicVolMin)
+	postUpdate(MusicState, "Playing")
+	if ((MusicVolume.state as DecimalType) < musicVolMax){
+		sendCommand(MusicVolume, MusicVolume.state as DecimalType + musicVolStep)
+	}
+end
 rule "Play music from Stop"
 when
 	Item MusicState changed from Stop to DoPlay
@@ -315,6 +337,24 @@ then
 	executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
 	postUpdate(MusicState, "Pause")
 end
+rule "Stop Music from Playing"
+when
+	Item MusicState changed from Playing to DoStop
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh stop')
+	postUpdate(MusicState, "Stop")
+end
+rule "Stop Music from Pause"
+when
+	Item MusicState changed from Pause to DoStop
+then
+	executeCommandLine('./configurations/vlcSocketPlayer.sh pause')
+	executeCommandLine('./configurations/vlcSocketPlayer.sh stop')
+	postUpdate(MusicState, "Stop")
+end
+/**
+ * To increase music volume, by musicVolStep, every musicVolUpWait seconds
+ */
 rule "Music Vol Up"
 when
 	Item MusicVolume received command
@@ -344,6 +384,18 @@ then
 	sendCommand(ArduinoControl, "TVONOFF;")
 	postUpdate(TVState, "Off")
 end
+rule "Turn TV on when already on"
+when
+	Item TVState changed from On to TurnOn
+then
+	postUpdate(TVState, "On")
+end
+rule "Turn TV off when already off"
+when
+	Item TVState changed from Off to TurnOff
+then
+	postUpdate(TVState, "Off")
+end
 
 /**
  * Rule when pressure sensor is pressed or unpressd
@@ -352,38 +404,9 @@ rule "Pressure sensor pressed or unpressed"
 when
 	Item ArduinoSensors changed
 then
-	if (ArduinoSensors.state.toString().contains("PRESSURE1")){
-		postUpdate(BedState, CLOSED)
- 	} else if (ArduinoSensors.state.toString().contains("PRESSURE0")){
+	if (ArduinoSensors.state.toString().contains("UnPressed")){
 		postUpdate(BedState, OPEN)
+ 	} else if (ArduinoSensors.state.toString().contains("Pressed")){
+		postUpdate(BedState, CLOSED)
  	}
 end
-
-
-
-/**
- * IT SHOULD WORK... We've got to search on that...
- */
-
-///**
-// * Rule when pressure sensor is pressed
-// */
-//rule "Pressure sensor pressed"
-//when
-//				Item ArduinoPressureSensor changed from PRESSURE0 to PRESSURE1
-//then
-//				logInfo("SensorPressed","Pressure Sensor has been pressed")
-//				sendCommand(CoffeeMachine, ON)
-//end
-//
-//
-///**
-// * Rule when pressure sensor is unpressed
-// */
-//rule "Pressure sensor unpressed"
-//when
-//				Item ArduinoPressureSensor changed from PRESSURE1 to PRESSURE0
-//then
-//				logInfo("SensorUnPressed","Pressure Sensor has been unpressed")
-//				sendCommand(CoffeeMachine, OFF)
-//end
